@@ -48,78 +48,93 @@ const App = () => {
   const modifyExpense = (index, edit = false) => {
     const expenseToModify = expenseList[index];
     if (edit) {
+      // Pre-fill the inputs for editing
       setProductTitle(expenseToModify.title);
-      setUserAmount(expenseToModify.amount);
+      setUserAmount(expenseToModify.amount.toString());
+      // Temporarily remove the expense from the list
+      setExpenseList(expenseList.filter((_, i) => i !== index));
+      // Adjust expense and balance
+      setExpense(expense - expenseToModify.amount);
+      setBalance(balance + expenseToModify.amount);
+    } else {
+      // Permanently remove the expense
+      setExpense(expense - expenseToModify.amount);
+      setBalance(balance + expenseToModify.amount);
+      setExpenseList(expenseList.filter((_, i) => i !== index));
     }
-
-    setExpense(expense - expenseToModify.amount);
-    setBalance(balance + expenseToModify.amount);
-    setExpenseList(expenseList.filter((_, i) => i !== index));
   };
 
   return (
-    <div className="wrapper">
-      <h3>Expense Tracker</h3>
-      <div className="container">
-        <div className="total-amount-container">
-          <input
-            type="number"
-            placeholder="Enter Total Amount"
-            value={tempAmount}
-            onChange={(e) => setTempAmount(e.target.value)}
-          />
-          <button className="submit" onClick={handleTotalAmount}>
-            Set Budget
-          </button>
-          {error.budget && <p className="error">Please enter a valid budget.</p>}
-        </div>
-        <div className="output-container flex-space">
-          <p>Total Budget: ₹{totalAmount}</p>
-          <p>Expenses: ₹{expense}</p>
-          <p>Balance: ₹{balance}</p>
-        </div>
-        <div className="user-amount-container">
-          <input
-            type="text"
-            placeholder="Enter Product Name"
-            value={productTitle}
-            onChange={(e) => setProductTitle(e.target.value)}
-          />
-          <input
-            type="number"
-            placeholder="Enter Expense Amount"
-            value={userAmount}
-            onChange={(e) => setUserAmount(e.target.value)}
-          />
-          <button className="submit" onClick={addExpense}>
-            Add Expense
-          </button>
-          {error.product && (
-            <p className="error">Please fill in both fields.</p>
-          )}
-        </div>
-        <div className="list">
-          {expenseList.map((item, index) => (
-            <div
-              className="sublist-content flex-space"
-              key={`${item.title}-${index}`}
-            >
-              <p className="product">{item.title}</p>
-              <p className="amount">₹{item.amount}</p>
-              <button
-                className="edit"
-                onClick={() => modifyExpense(index, true)}
+    <div>
+      <nav className="navbar">
+        <h1>Expense Tracker</h1>
+      </nav>
+
+      <div className="wrapper">
+        <h3>Manage Your Expenses</h3>
+        <div className="container">
+          <div className="total-amount-container">
+            <input
+              type="number"
+              placeholder="Enter Total Amount"
+              value={tempAmount}
+              onChange={(e) => setTempAmount(e.target.value)}
+            />
+            <button className="submit" onClick={handleTotalAmount}>
+              Set Budget
+            </button>
+            {error.budget && (
+              <p className="error">Please enter a valid budget.</p>
+            )}
+          </div>
+          <div className="output-container flex-space">
+            <p>Total Budget: ₹{totalAmount}</p>
+            <p>Expenses: ₹{expense}</p>
+            <p>Balance: ₹{balance}</p>
+          </div>
+          <div className="user-amount-container">
+            <input
+              type="text"
+              placeholder="Enter Product Name"
+              value={productTitle}
+              onChange={(e) => setProductTitle(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Enter Expense Amount"
+              value={userAmount}
+              onChange={(e) => setUserAmount(e.target.value)}
+            />
+            <button className="submit" onClick={addExpense}>
+              Add Expense
+            </button>
+            {error.product && (
+              <p className="error">Please fill in both fields.</p>
+            )}
+          </div>
+          <div className="list">
+            {expenseList.map((item, index) => (
+              <div
+                className="sublist-content flex-space"
+                key={`${item.title}-${index}`}
               >
-                Edit
-              </button>
-              <button
-                className="delete"
-                onClick={() => modifyExpense(index)}
-              >
-                Delete
-              </button>
-            </div>
-          ))}
+                <p className="product">{item.title}</p>
+                <p className="amount">₹{item.amount}</p>
+                <button
+                  className="edit"
+                  onClick={() => modifyExpense(index, true)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="delete"
+                  onClick={() => modifyExpense(index)}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
